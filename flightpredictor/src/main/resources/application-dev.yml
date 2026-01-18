@@ -21,3 +21,6 @@ server:
 logging:
   level:
     com.fligthontime.flightpredictor: DEBUG
+
+fastapi:
+  base-url: https://lay-represented-beverly-mix.trycloudflare.com
