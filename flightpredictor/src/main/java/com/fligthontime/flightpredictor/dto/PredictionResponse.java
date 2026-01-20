@@ -13,6 +13,6 @@ public record PredictionResponse(
         @JsonProperty("details")
         String details,
 
-        @JsonProperty("weather_used")
-        WeatherUsed weatherUsed
+        @JsonProperty("enriched_data")
+        EnrichedData enrichedData
 ) {}

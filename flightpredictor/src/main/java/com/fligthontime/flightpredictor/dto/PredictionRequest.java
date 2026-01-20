@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record PredictionRequest(
 
+        // Validar DTO
         @JsonProperty("CARRIER_NAME")
         String carrierName,
 
         @JsonProperty("DEPARTING_AIRPORT")
         String departingAirport,
 
-        @JsonProperty("FECHA")
-        String fecha,
+        @JsonProperty("DATE")
+        String date,
 
-        @JsonProperty("HORA")
-        String hora
+        @JsonProperty("TIME")
+        String time
 ) {}

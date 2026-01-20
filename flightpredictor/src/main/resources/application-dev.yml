@@ -23,4 +23,4 @@ logging:
     com.fligthontime.flightpredictor: DEBUG
 
 fastapi:
-  base-url: https://lay-represented-beverly-mix.trycloudflare.com
+  base-url: https://search-periods-principle-weed.trycloudflare.com
