@@ -19,3 +19,6 @@ server:
 logging:
   level:
     com.fligthontime.flightpredictor: INFO
+
+fastapi:
+  base-url: https://search-periods-principle-weed.trycloudflare.com
