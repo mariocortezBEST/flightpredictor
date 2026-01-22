@@ -21,10 +21,8 @@ public class PredictionController {
             @RequestBody PredictionRequest request,
             @RequestParam(required = false, defaultValue = "remote") String mode
     ) {
-        if ("local".equalsIgnoreCase(mode)) {
-            return localModelService.predictLocal(request);
-        }
-        return predictionService.predict(request);
+        // Delegamos TODA la lógica al servicio principal, pasando el modo
+        return predictionService.predict(request, mode);
     }
 
     @GetMapping("/debug-model")
