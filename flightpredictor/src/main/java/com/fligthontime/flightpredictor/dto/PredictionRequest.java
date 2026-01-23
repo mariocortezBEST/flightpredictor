@@ -1,7 +1,5 @@
 package com.fligthontime.flightpredictor.dto;
 
-package com.fligthontime.flightpredictor.dto;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -32,10 +30,3 @@ public record PredictionRequest(
         @JsonProperty("TIME")
         String time
 ) {}
-
-//{
-//  "carrierName": "Delta",
-//  "departingAirport": "JFK",
-//  "fecha": "2026-01-15",
-//  "hora": "14:30"
-//}

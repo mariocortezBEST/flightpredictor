@@ -14,8 +14,11 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
-  port: 8080
+  port: 8081
 
 logging:
   level:
     com.fligthontime.flightpredictor: INFO
+
+fastapi:
+  base-url: https://search-periods-principle-weed.trycloudflare.com
