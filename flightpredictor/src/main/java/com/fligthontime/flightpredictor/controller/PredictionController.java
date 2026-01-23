@@ -4,6 +4,7 @@ import com.fligthontime.flightpredictor.dto.PredictionRequest;
 import com.fligthontime.flightpredictor.dto.PredictionResponse;
 import com.fligthontime.flightpredictor.service.LocalModelService;
 import com.fligthontime.flightpredictor.service.PredictionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class PredictionController {
 
     @PostMapping
     public PredictionResponse predict(
-            @RequestBody PredictionRequest request,
+            @Valid @RequestBody PredictionRequest request,
             @RequestParam(required = false, defaultValue = "remote") String mode
     ) {
         // Delegamos TODA la lógica al servicio principal, pasando el modo
