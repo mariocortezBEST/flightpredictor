@@ -1,6 +1,7 @@
 package com.fligthontime.flightpredictor.service;
 
 import com.fligthontime.flightpredictor.dto.EnrichedData;
+import com.fligthontime.flightpredictor.dto.PredictionListResponse;
 import com.fligthontime.flightpredictor.dto.PredictionRequest;
 import com.fligthontime.flightpredictor.dto.PredictionResponse;
 import com.fligthontime.flightpredictor.entity.PredictionCache;
@@ -8,6 +9,9 @@ import com.fligthontime.flightpredictor.repository.PredictionRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -87,5 +91,11 @@ public class PredictionService {
         }
 
         return response;
+    }
+
+    public Page<PredictionListResponse> listPredictions(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PredictionCache> predictions = repository.findAll(pageable);
+        return predictions.map(PredictionListResponse::new);
     }
 }
