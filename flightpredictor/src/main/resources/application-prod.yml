@@ -1,5 +1,6 @@
 spring:
   datasource:
+    # Configuración para Docker / OCI (Inyectar variables de entorno)
     url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/flightdb?useSSL=false&serverTimezone=UTC
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:root}
