@@ -8,11 +8,13 @@ import java.util.Optional;
 
 @Repository
 public interface PredictionRepository extends JpaRepository<PredictionCache, Long> {
-    // Método para buscar si ya existe una predicción para este vuelo específico
-    Optional<PredictionCache> findByCarrierNameAndDepartingAirportAndFlightDateAndFlightTime(
-            String carrierName, 
-            String departingAirport, 
-            String flightDate, 
+
+    // CAMBIO: Usamos 'findFirstBy' para asegurar que solo devuelva 1 resultado,
+    // incluso si hay duplicados en la base de datos.
+    Optional<PredictionCache> findFirstByCarrierNameAndDepartingAirportAndFlightDateAndFlightTime(
+            String carrierName,
+            String departingAirport,
+            String flightDate,
             String flightTime
     );
 }

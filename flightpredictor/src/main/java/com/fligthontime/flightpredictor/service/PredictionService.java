@@ -30,7 +30,8 @@ public class PredictionService {
 
     public PredictionResponse predict(PredictionRequest request, String mode) {
         // 1. Buscar en Caché (Base de Datos) - SIEMPRE PRIMERO
-        Optional<PredictionCache> cached = repository.findByCarrierNameAndDepartingAirportAndFlightDateAndFlightTime(
+        // CAMBIO: Usamos findFirstBy para evitar error NonUniqueResultException
+        Optional<PredictionCache> cached = repository.findFirstByCarrierNameAndDepartingAirportAndFlightDateAndFlightTime(
                 request.carrierName(),
                 request.departingAirport(),
                 request.date(),
@@ -72,18 +73,30 @@ public class PredictionService {
         // Solo guardamos si la respuesta fue exitosa (probabilidad > 0)
         if (response != null && response.probability() > 0) {
             try {
-                PredictionCache newCache = PredictionCache.builder()
-                        .carrierName(request.carrierName())
-                        .departingAirport(request.departingAirport())
-                        .flightDate(request.date())
-                        .flightTime(request.time())
-                        .predictionResult(response.prediction())
-                        .probability(response.probability())
-                        .queryTimestamp(LocalDateTime.now())
-                        .build();
-                
-                repository.save(newCache);
-                logger.info("💾 Predicción guardada en DB");
+                // Verificación extra: ¿Ya existe? (Aunque findFirstBy nos protege al leer, evitemos escribir basura)
+                boolean exists = repository.findFirstByCarrierNameAndDepartingAirportAndFlightDateAndFlightTime(
+                        request.carrierName(),
+                        request.departingAirport(),
+                        request.date(),
+                        request.time()
+                ).isPresent();
+
+                if (!exists) {
+                    PredictionCache newCache = PredictionCache.builder()
+                            .carrierName(request.carrierName())
+                            .departingAirport(request.departingAirport())
+                            .flightDate(request.date())
+                            .flightTime(request.time())
+                            .predictionResult(response.prediction())
+                            .probability(response.probability())
+                            .queryTimestamp(LocalDateTime.now())
+                            .build();
+                    
+                    repository.save(newCache);
+                    logger.info("💾 Predicción guardada en DB");
+                } else {
+                    logger.info("⚠️ Predicción ya existía en DB, saltando guardado.");
+                }
                 
             } catch (Exception e) {
                 logger.error("⚠️ Error guardando en caché DB: {}", e.getMessage());

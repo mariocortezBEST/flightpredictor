@@ -1,9 +1,10 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:${DB_HOST:@flightontimedb_tp}?TNS_ADMIN=${TNS_ADMIN:C:/Users/faner/wallet}
-    username: ${DB_USERNAME:ADMIN}
-    password: ${DB_PASSWORD:Flightontime123@}
-    driver-class-name: oracle.jdbc.OracleDriver
+    # Configuración para Docker / OCI (Inyectar variables de entorno)
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/flightdb?useSSL=false&serverTimezone=UTC
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -11,10 +12,10 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
-  port: 8081
+  port: 8080  # CAMBIO: 8080 para coincidir con Cloud Run por defecto
 
 logging:
   level:
