@@ -1,16 +1,14 @@
 package com.fligthontime.flightpredictor.service;
 
-import com.fligthontime.flightpredictor.dto.*;
+import com.fligthontime.flightpredictor.dto.EnrichedData;
+import com.fligthontime.flightpredictor.dto.PredictionRequest;
+import com.fligthontime.flightpredictor.dto.PredictionResponse;
 import com.fligthontime.flightpredictor.entity.PredictionCache;
 import com.fligthontime.flightpredictor.repository.PredictionRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -42,11 +40,15 @@ public class PredictionService {
         if (cached.isPresent()) {
             logger.info("✅ Predicción encontrada en caché DB para: {} - {}", request.carrierName(), request.date());
             PredictionCache p = cached.get();
+            
+            // FIX: Devolver un objeto EnrichedData vacío en lugar de null para evitar errores en el Frontend
+            EnrichedData emptyEnrichedData = new EnrichedData(0.0, 0.0, 0.0, 0.0, 0.0);
+
             return new PredictionResponse(
                     p.getPredictionResult(),
                     p.getProbability(),
                     "Recuperado de Base de Datos (Caché)",
-                    null 
+                    emptyEnrichedData 
             );
         }
 
@@ -90,11 +92,4 @@ public class PredictionService {
 
         return response;
     }
-
-    public Page<PredictionListResponse> listPredictions(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<PredictionCache> predictions = repository.findAll(pageable);
-        return predictions.map(PredictionListResponse::new);
-    }
-
 }
