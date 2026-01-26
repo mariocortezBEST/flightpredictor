@@ -1,36 +1,36 @@
 # Etapa 1: Construcción (Build)
-FROM eclipse-temurin:17-jdk-alpine AS builder
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copiar archivos de configuración de Maven
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
+# Copiar el archivo de configuración de Maven
+COPY pom.xml ./
 
-# Descargar dependencias (Capa cacheada si no cambia el pom.xml)
-# Usamos 'go-offline' para mejorar tiempos en builds sucesivos
-RUN ./mvnw dependency:go-offline
+# Descargar dependencias
+RUN mvn dependency:go-offline
 
 # Copiar el código fuente
 COPY src ./src
 
-# Compilar y empaquetar (Saltando tests para agilizar el build de contenedor)
-RUN ./mvnw package -DskipTests
+# Compilar y empaquetar
+RUN mvn package -DskipTests
 
 # Etapa 2: Ejecución (Runtime)
-FROM eclipse-temurin:17-jre-alpine
+# CAMBIO IMPORTANTE: Usamos la versión estándar (Jammy/Ubuntu) en lugar de Alpine
+# Esto es necesario para que las librerías nativas de ONNX Runtime funcionen correctamente.
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Crear usuario no-root por seguridad (Personalizado)
-RUN addgroup -S mariodev_28 && adduser -S mariodev_28 -G mariodev_28
-USER mariodev_28:mariodev_28
+# Crear usuario no-root por seguridad
+RUN groupadd -r mariodev_28 && useradd -r -g mariodev_28 mariodev_28
+USER mariodev_28
 
-# Copiar el JAR generado desde la etapa de construcción
+# Copiar el JAR generado
 COPY --from=builder /app/target/*.jar app.jar
 
 # Exponer el puerto
 EXPOSE 8080
 
-# Variables de entorno por defecto (pueden sobreescribirse al correr)
+# Variables de entorno por defecto
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # Comando de inicio
